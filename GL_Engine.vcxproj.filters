@@ -70,10 +70,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\shader.fs">
+    <None Include="shaders\phong.frag">
       <Filter>Archivos de origen\shaders</Filter>
     </None>
-    <None Include="shaders\shader.vs">
+    <None Include="shaders\phong.vert">
       <Filter>Archivos de origen\shaders</Filter>
     </None>
   </ItemGroup>
