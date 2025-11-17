@@ -4,8 +4,8 @@
 #include "Texture.h"
 #include "Model.h"
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
+#define SCREEN_WIDTH 1600
+#define SCREEN_HEIGHT 1200
 
 int vertexColorLocation;
 
@@ -47,11 +47,11 @@ void renderLoop(GLFWwindow* window, Shader shader)
 
 		processInput(window);
 
-		glClearColor(0.0f, 0.5f, 0.8f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		context.camera->UpdateView();
-		context.shader->setMat4("view", context.camera->GetView());
+		context.shader->SetMat4("view", context.camera->GetView());
 
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
@@ -61,7 +61,7 @@ void renderLoop(GLFWwindow* window, Shader shader)
 		for (unsigned int idx = 0; idx < context.models.size(); idx++)
 		{
 			Model& gameObject = context.models[idx];
-			shader.setMat4("model", gameObject.ModelMat);
+			shader.SetMat4("model", gameObject.ModelMat);
 			gameObject.Draw(shader);
 		}
 		
@@ -138,27 +138,32 @@ int main()
 
 	Model nanosuit(FileSystem::getPath("models/crysis/nanosuit.obj"));
 	Model plane(FileSystem::getPath("models/plane/plane.obj"));
+	Model backpack(FileSystem::getPath("models/backpack/backpack.obj"));
 
+	backpack.ModelMat = glm::translate(backpack.ModelMat, glm::vec3(5.0f, 2.0f, 0.0f));
 	context.models.push_back(nanosuit);
 	context.models.push_back(plane);
+	context.models.push_back(backpack);
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	
-	context.shader = new Shader("shaders/shader.vs", "shaders/shader.fs");
+	context.shader = new Shader("shaders/phong.vert", "shaders/phong.frag");
 	Shader& shader = *context.shader;
-	shader.use();
+	shader.Use();
 
-	glm::vec3 cameraPos = glm::vec3(0.0f, 2.f, -3.0f);
+	glm::vec3 cameraPos = glm::vec3(0.0f, 2.f, 10.0f);
 	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	context.camera = new Camera(cameraPos, cameraPos + cameraFront, cameraUp);
 	Camera& camera = *context.camera;
-	camera.SetPerspectiveProj(SCREEN_WIDTH, SCREEN_HEIGHT, 30.0f);
+	camera.SetPerspectiveProj(SCREEN_WIDTH, SCREEN_HEIGHT, 60.0f);
 
 	
-	shader.setMat4("projection", camera.GetProjection());
-	
+	shader.SetMat4("projection", camera.GetProjection());
+	shader.SetVec3("Light_Color", glm::vec3(1.0f, 1.0f, 1.0f));
+	shader.SetVec3("Light_Pos", glm::vec3(0.0f, 5.0f, 5.0f));
+	shader.SetVec3("View_Pos", camera.Position); // Needs to be updated in Render Loop
 
 	vertexColorLocation = glGetUniformLocation(shader.ID, "ourColor");
 
