@@ -9,36 +9,40 @@ in vec3 Vert_World_Pos;
 
 uniform sampler2D texture_diffuse1;
 
-uniform vec3 Light_Pos;
-uniform vec3 Light_Color;
+struct DirectionalLight {
+	vec3 Dir;
+	vec3 Color;
+};
+
+uniform DirectionalLight dirLight;
 
 uniform vec3 View_Pos;
 
-uniform vec4 ourColor;
 
 vec4 ambientLight()
 {
 	float ambientStrength = 0.1f;
-	return vec4(ambientStrength * Light_Color, 1.f);
+	return vec4(ambientStrength * dirLight.Color, 1.f);
 }
 
 vec4 diffuseLight()
 {
 	vec3 normal = normalize(Normal);
-	vec3 lightDir = normalize(Light_Pos - Vert_World_Pos);
+	//vec3 lightDir = normalize(Light_Pos - Vert_World_Pos);
+	vec3 lightDir = normalize(-dirLight.Dir);
 	float diff = max(dot(normal,lightDir), 0.0f);
-	return vec4(diff * Light_Color, 1.0f);
+	return vec4(diff * dirLight.Color, 1.0f);
 }
 
 vec4 specularLight()
 {
 	float specularStrength = 0.5f;
 	vec3 normal = normalize(Normal);
-	vec3 lightDir = normalize(Light_Pos - Vert_World_Pos);
+	vec3 lightDir = normalize(-dirLight.Dir);
 	vec3 viewDir = normalize(View_Pos - Vert_World_Pos);
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir),0.0),32);
-	return vec4(specularStrength * spec * Light_Color, 1.f);
+	return vec4(specularStrength * spec * dirLight.Color, 1.f);
 }
 
 void main()

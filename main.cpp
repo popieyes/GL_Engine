@@ -1,8 +1,7 @@
+#pragma once
 #include "Common.h"
-#include "Shader.h"
-#include "Camera.h"
-#include "Texture.h"
-#include "Model.h"
+#include "Scene.h"
+#include "DirectionalLight.h"
 
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 1200
@@ -16,28 +15,25 @@ struct AppContext {
 	float mouseLastX;
 	float mouseLastY;
 	bool mouseInWindow = false;
-
-	Shader* shader;
-	Camera* camera;
-	vector<Model> models;
 };
 
 AppContext context;
+Scene mainScene;
 
 void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		context.camera->ProcessKeyboard(FORWARD, context.deltaTime);
+		mainScene.camera->ProcessKeyboard(FORWARD, context.deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		context.camera->ProcessKeyboard(BACKWARD, context.deltaTime);
+		mainScene.camera->ProcessKeyboard(BACKWARD, context.deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		context.camera->ProcessKeyboard(LEFT, context.deltaTime);
+		mainScene.camera->ProcessKeyboard(LEFT, context.deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		context.camera->ProcessKeyboard(RIGHT, context.deltaTime);
+		mainScene.camera->ProcessKeyboard(RIGHT, context.deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 }
-void renderLoop(GLFWwindow* window, Shader shader)
+void renderLoop(GLFWwindow* window)
 {
 	while (!glfwWindowShouldClose(window))
 	{
@@ -50,19 +46,27 @@ void renderLoop(GLFWwindow* window, Shader shader)
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		context.camera->UpdateView();
-		context.shader->SetMat4("view", context.camera->GetView());
+		mainScene.camera->UpdateView();
+		mainScene.mainShader->SetMat4("view", mainScene.camera->GetView());
 
 		float timeValue = glfwGetTime();
 		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
 		
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 		
-		for (unsigned int idx = 0; idx < context.models.size(); idx++)
+		/* Setup lights from the scene in the shader */
+		for (Light* light : mainScene.lights)
 		{
-			Model& gameObject = context.models[idx];
-			shader.SetMat4("model", gameObject.ModelMat);
-			gameObject.Draw(shader);
+			light->Setup(*mainScene.mainShader);
+		}
+
+		/* Draw models. All info in the shader should be uploaded by this point. */
+		for (unsigned int idx = 0; idx < mainScene.models.size(); idx++)
+		{
+			Model& gameObject = mainScene.models[idx];
+			
+			mainScene.mainShader->SetMat4("model", gameObject.ModelMat);
+			gameObject.Draw(*mainScene.mainShader);
 		}
 		
 		glfwSwapBuffers(window);
@@ -101,7 +105,7 @@ void mouse_callback(GLFWwindow* window, double xPosIn, double yPosIn)
 	context.mouseLastX = xPos;
 	context.mouseLastY = yPos;
 
-	context.camera->ProcessMouse(xOffset, yOffset);
+	mainScene.camera->ProcessMouse(xOffset, yOffset);
 }
 
 GLFWwindow* createWindow(int& code)
@@ -136,38 +140,41 @@ int main()
 
 	stbi_set_flip_vertically_on_load(true);
 
+	mainScene = Scene();
+
 	Model nanosuit(FileSystem::getPath("models/crysis/nanosuit.obj"));
 	Model plane(FileSystem::getPath("models/plane/plane.obj"));
 	Model backpack(FileSystem::getPath("models/backpack/backpack.obj"));
 
 	backpack.ModelMat = glm::translate(backpack.ModelMat, glm::vec3(5.0f, 2.0f, 0.0f));
-	context.models.push_back(nanosuit);
+	/*context.models.push_back(nanosuit);
 	context.models.push_back(plane);
-	context.models.push_back(backpack);
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	context.models.push_back(backpack);*/
+	vector<Model> models = { nanosuit, plane, backpack };
+	mainScene.AddModel(models);
 	
-	context.shader = new Shader("shaders/phong.vert", "shaders/phong.frag");
-	Shader& shader = *context.shader;
+	mainScene.mainShader = new Shader("shaders/phong.vert", "shaders/phong.frag");
+	Shader& shader = *mainScene.mainShader;
 	shader.Use();
 
 	glm::vec3 cameraPos = glm::vec3(0.0f, 2.f, 10.0f);
 	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	context.camera = new Camera(cameraPos, cameraPos + cameraFront, cameraUp);
-	Camera& camera = *context.camera;
+	mainScene.camera = new Camera(cameraPos, cameraPos + cameraFront, cameraUp);
+	Camera& camera = *mainScene.camera;
 	camera.SetPerspectiveProj(SCREEN_WIDTH, SCREEN_HEIGHT, 60.0f);
-
-	
 	shader.SetMat4("projection", camera.GetProjection());
-	shader.SetVec3("Light_Color", glm::vec3(1.0f, 1.0f, 1.0f));
-	shader.SetVec3("Light_Pos", glm::vec3(0.0f, 5.0f, 5.0f));
 	shader.SetVec3("View_Pos", camera.Position); // Needs to be updated in Render Loop
 
-	vertexColorLocation = glGetUniformLocation(shader.ID, "ourColor");
+	
+	/* LIGHTING */
+	DirectionalLight* dirLight = new DirectionalLight(glm::vec3(0.0f, 5.0f, -5.0f));
+	dirLight->Color = glm::vec3(1.0f, 1.f, 1.f);
+	dirLight->Intensity = 1.0f;
+	mainScene.AddLight(dirLight);
 
-	renderLoop(window, shader);
+	renderLoop(window);
 
 	return code;
 }

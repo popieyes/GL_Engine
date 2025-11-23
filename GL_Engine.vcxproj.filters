@@ -16,6 +16,12 @@
     <Filter Include="Archivos de origen\shaders">
       <UniqueIdentifier>{a6f93a8c-b1ff-4f8e-908c-baa52ac212c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de encabezado\Light">
+      <UniqueIdentifier>{199a71fa-ba2e-4868-8bfe-415749e3eeea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Light">
+      <UniqueIdentifier>{8af67ed5-ab27-4d16-a0c6-ef77a853dc35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -42,6 +48,18 @@
     <ClCompile Include="Model.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Archivos de origen\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Archivos de origen\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -67,6 +85,18 @@
     </ClInclude>
     <ClInclude Include="filesystem.h">
       <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Archivos de encabezado\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Archivos de encabezado\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
