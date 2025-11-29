@@ -60,6 +60,12 @@
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>Archivos de origen\Light</Filter>
     </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Archivos de origen\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLight.cpp">
+      <Filter>Archivos de origen\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -96,6 +102,12 @@
       <Filter>Archivos de encabezado\Light</Filter>
     </ClInclude>
     <ClInclude Include="DirectionalLight.h">
+      <Filter>Archivos de encabezado\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Archivos de encabezado\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLight.h">
       <Filter>Archivos de encabezado\Light</Filter>
     </ClInclude>
   </ItemGroup>

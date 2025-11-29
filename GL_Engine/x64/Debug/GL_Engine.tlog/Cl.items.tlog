@@ -6,7 +6,9 @@ C:\Users\menec\Documents\CodingAdventures\GL_Engine\Light.cpp;C:\Users\menec\Doc
 C:\Users\menec\Documents\CodingAdventures\GL_Engine\main.cpp;C:\Users\menec\Documents\CodingAdventures\GL_Engine\GL_Engine\x64\Debug\main.obj
 C:\Users\menec\Documents\CodingAdventures\GL_Engine\Mesh.cpp;C:\Users\menec\Documents\CodingAdventures\GL_Engine\GL_Engine\x64\Debug\Mesh.obj
 C:\Users\menec\Documents\CodingAdventures\GL_Engine\Model.cpp;C:\Users\menec\Documents\CodingAdventures\GL_Engine\GL_Engine\x64\Debug\Model.obj
+C:\Users\menec\Documents\CodingAdventures\GL_Engine\PointLight.cpp;C:\Users\menec\Documents\CodingAdventures\GL_Engine\GL_Engine\x64\Debug\PointLight.obj
 C:\Users\menec\Documents\CodingAdventures\GL_Engine\Scene.cpp;C:\Users\menec\Documents\CodingAdventures\GL_Engine\GL_Engine\x64\Debug\Scene.obj
 C:\Users\menec\Documents\CodingAdventures\GL_Engine\Shader.cpp;C:\Users\menec\Documents\CodingAdventures\GL_Engine\GL_Engine\x64\Debug\Shader.obj
+C:\Users\menec\Documents\CodingAdventures\GL_Engine\SpotLight.cpp;C:\Users\menec\Documents\CodingAdventures\GL_Engine\GL_Engine\x64\Debug\SpotLight.obj
 C:\Users\menec\Documents\CodingAdventures\GL_Engine\stb_image.cpp;C:\Users\menec\Documents\CodingAdventures\GL_Engine\GL_Engine\x64\Debug\stb_image.obj
 C:\Users\menec\Documents\CodingAdventures\GL_Engine\Texture.cpp;C:\Users\menec\Documents\CodingAdventures\GL_Engine\GL_Engine\x64\Debug\Texture.obj

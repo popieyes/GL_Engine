@@ -2,6 +2,7 @@
 #include "Common.h"
 #include "Scene.h"
 #include "DirectionalLight.h"
+#include "SpotLight.h"
 
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 1200
@@ -169,10 +170,14 @@ int main()
 
 	
 	/* LIGHTING */
-	DirectionalLight* dirLight = new DirectionalLight(glm::vec3(0.0f, 5.0f, -5.0f));
+	DirectionalLight* dirLight = new DirectionalLight(glm::vec3(0.0f, 5.0f, 1.0f));
 	dirLight->Color = glm::vec3(1.0f, 1.f, 1.f);
 	dirLight->Intensity = 1.0f;
+
+	SpotLight* flashlight = new SpotLight();
+
 	mainScene.AddLight(dirLight);
+	mainScene.AddLight(flashlight);
 
 	renderLoop(window);
 

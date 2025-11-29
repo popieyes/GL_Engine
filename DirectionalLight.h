@@ -4,7 +4,6 @@ class DirectionalLight : public Light
 {
 public:
 	DirectionalLight(vec3 dir) { Direction = dir; }
-	
 
 	void Setup(Shader& shader) override;
 private:
