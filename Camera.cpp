@@ -31,10 +31,12 @@ void Camera::SetPerspectiveProj(int viewportW, int viewportH, float fov)
 void Camera::ProcessKeyboard(CameraMovement movement, float deltaTime)
 {
 	float velocity = MovementSpeed * deltaTime;
+	const vec3 front_dir = glm::vec3(cos(radians(Yaw)), 0.f, sin(radians(Yaw)));
+	
 	if (movement == FORWARD)
-		Position += Front * velocity;
+		Position += front_dir * velocity;
 	if (movement == BACKWARD)
-		Position -= Front * velocity;
+		Position -= front_dir * velocity;
 	if (movement == LEFT)
 		Position -= Right * velocity;
 	if (movement == RIGHT)
