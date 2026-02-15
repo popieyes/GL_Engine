@@ -6,7 +6,7 @@ settings:
     title: "GL_Engine"
     fullscreen: false
     vsync: true
-  background_color: [0.1,0.1,0.1,1.0] # RGBA
+  background_color: [0.0,0.7,1.0,0.1] # RGBA
   
 # --- Camera Configuration ---
 camera:

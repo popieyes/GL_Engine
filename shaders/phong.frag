@@ -45,7 +45,7 @@ vec4 specularLight()
 	vec3 normal = normalize(Normal);
 	vec3 lightDir = normalize(-dirLight.Dir);
 	vec3 viewDir = normalize(View_Pos - Vert_World_Pos);
-	vec3 reflectDir = reflect(-lightDir, normal);
+	vec3 reflectDir = reflect(lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir),0.0),32);
 	return vec4(specularStrength * spec * dirLight.Color, 1.f);
 }

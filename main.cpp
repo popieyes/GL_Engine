@@ -49,12 +49,7 @@ void renderLoop(GLFWwindow* window, WindowSettings settings)
 		
 		mainScene.camera->UpdateView();
 		mainScene.mainShader->SetMat4("view", mainScene.camera->GetView());
-
-		float timeValue = glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-		
+		mainScene.mainShader->SetVec3("View_Pos", mainScene.camera->Position);
 		/* Setup lights from the scene in the shader */
 		for (Light* light : mainScene.lights)
 		{
@@ -161,7 +156,7 @@ int main()
 	}
 
 	/* ====== SCENE DEFINITION ======= */
-	mainScene.mainShader = new Shader("shaders/phong.vert", "shaders/phong.frag");
+	mainScene.mainShader = new Shader("shaders/toon.vert", "shaders/toon.frag");
 	Shader& shader = *mainScene.mainShader;
 	shader.Use();
 	
@@ -183,13 +178,13 @@ int main()
 
 	
 	/* LIGHTING */
-	DirectionalLight* dirLight = new DirectionalLight(glm::vec3(0.0f, 5.0f, 1.0f));
+	DirectionalLight* dirLight = new DirectionalLight(glm::vec3(0.0f, -1.0f, -0.5f));
 	dirLight->Color = glm::vec3(1.0f, 1.f, 1.f);
-	dirLight->Intensity = 1.0f;
+	dirLight->Intensity = 1.f;
 
 	SpotLight* flashlight = new SpotLight();
 	AmbientLight* ambient_light = new AmbientLight();
-	ambient_light->Intensity = 1.0f;
+	ambient_light->Intensity = 0.4f;
 	ambient_light->Color = glm::vec3(1.0f, 1.0f, 1.0f);
 	mainScene.AddLight(dirLight);
 	mainScene.AddLight(flashlight);
