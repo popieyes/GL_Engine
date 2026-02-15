@@ -26,10 +26,11 @@ To build and run the engine, you’ll need to compile and link the following lib
 | **GLM**   | Math library (vectors, matrices) |
 | **Assimp**| Model loading (OBJ, FBX, etc.)   |
 | **stb_image** | Texture loading utility     |
+| **yaml_cpp** | YAML Support |
 
 ## 🧰 Setup (Visual Studio)
 
-1. Clone the repository:
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/yourusername/opengl-game-engine.git
   - Compile the required libraries or link prebuilt binaries:
@@ -40,3 +41,25 @@ To build and run the engine, you’ll need to compile and link the following lib
 - Add include and lib directories for each dependency
 - Link necessary .lib files (e.g., glfw3.lib, assimp.lib)
 - Run the project — the entry point is in main.cpp.
+
+2. **Install dependencies**:
+- Install **vcpkg**. Open the terminal in a folder where you want to store it.
+     ``` git clone https://github.com/microsoft/vcpkg
+      .\vcpkg\bootstrap-vcpkg.bat
+     ```
+- Integrate. Let your IDE see the installed libraries automatically.
+     ```
+     .\vcpkg\vcpkg integrate install
+     ```
+- Install **yaml-cpp**.
+     ```
+     .\vcpkg\vcpkg install yaml-cpp:x64-windows
+     ```
+- Use the include in your project.
+     ```
+     #include <yaml-cpp/yaml.h>
+     ```
+---
+
+**Last Updated:** 2026-02-15
+**Project:** GL_Engine
