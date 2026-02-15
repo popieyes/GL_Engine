@@ -4,7 +4,7 @@ This repository contains a small OpenGL-based game engine currently in developme
 
 ## 🚧 Status
 
-![Screenshot](images/11-07-25.png)
+![Screenshot](images/15-02-26.png)
 
 ## 📦 Features
 
