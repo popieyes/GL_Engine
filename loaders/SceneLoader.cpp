@@ -47,6 +47,10 @@ bool SceneLoader::LoadScene(const std::string& filepath) {
             cameraSettings.position = ParseVec3(cam["position"]);
             cameraSettings.lookAt = ParseVec3(cam["look_at"]);
             cameraSettings.up = ParseVec3(cam["up"]);
+            cameraSettings.mouse_sensitivity = cam["mouse_sensitivity"].as<float>();
+            cameraSettings.yaw = cam["yaw"].as<float>();
+            cameraSettings.pitch = cam["pitch"].as<float>();
+            cameraSettings.movement_speed = cam["movement_speed"].as<float>();
             cameraSettings.fov = cam["fov"].as<float>();
         }
 

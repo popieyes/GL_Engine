@@ -1,11 +1,15 @@
 #include "Camera.h"
-Camera::Camera(glm::vec3 pos, glm::vec3 front, glm::vec3 up) : MovementSpeed(SPEED), Yaw(YAW), Pitch(PITCH), MouseSensitivity(SENSITIVITY)
+Camera::Camera(glm::vec3 pos, glm::vec3 front, glm::vec3 up, float maxYaw, float maxPitch, float mouseSensitivity, float mouseMovementSpeed)
 {
 	Position = pos;
 	Front = front;
 	WorldUp = up;
 	Right = glm::normalize(glm::cross(Front, WorldUp));
 	Up = glm::normalize(glm::cross(Right, Front));
+	MovementSpeed = mouseMovementSpeed;
+	MouseSensitivity = mouseSensitivity;
+	MaxPitch = maxPitch;
+	MaxYaw = maxYaw;
 	UpdateView();
 }
 
@@ -46,25 +50,24 @@ void Camera::ProcessMouse(float xOffset, float yOffset, GLboolean constrainPitch
 	Yaw = glm::mod(Yaw + xOffset, 360.0f);
 	Pitch += yOffset;
 	
-	Pitch = std::max(std::min(Pitch, 80.f), -80.0f);
+	Pitch = std::max(std::min(Pitch, MaxPitch), -MaxPitch);
 	
 	glm::vec3 direction;
-
-	// Convertir a radianes (glm usa radianes, no grados)
+	
 	float rYaw = glm::radians(Yaw);
 	float rPitch = glm::radians(Pitch);
 
-	// Calcular Y (Altura)
-	// Solo depende de cuanto miras arriba/abajo
+	// Compute Y (height)
+	// Depends on how high or low you are aiming
 	direction.y = sin(rPitch); 
 
-	// Calcular la longitud de la proyeccion en el suelo (la "sombra")
-	// Si miras muy arriba, esto se acerca a 0.
-	float sombra = cos(rPitch);
+	// Compute the shadow of the proyection in the floor
+	// If you look way too high it reaches 0
+	float shadow = cos(rPitch);
 
-	// Calcular X y Z usando esa sombra
-	direction.x = cos(rYaw) * sombra; // cos(yaw) * cos(pitch)
-	direction.z = sin(rYaw) * sombra; // sin(yaw) * cos(pitch)
+	// Compute X and Z using the shadow
+	direction.x = cos(rYaw) * shadow; // cos(yaw) * cos(pitch)
+	direction.z = sin(rYaw) * shadow; // sin(yaw) * cos(pitch)
 	
 	
 	Front = glm::normalize(direction);

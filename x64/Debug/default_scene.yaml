@@ -15,6 +15,10 @@ camera:
   position: [0.0, 2.0, 10.0]
   look_at: [0.0,0.0,1.0]
   up: [0.0,1.0,0.0]
+  yaw: 360 # Not used currently
+  pitch: 89
+  movement_speed: 3
+  mouse_sensitivity: 0.05
   
 # --- The Scene Graph ---
 entities:

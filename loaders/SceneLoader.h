@@ -20,6 +20,10 @@ struct CameraSettings
     glm::vec3 lookAt;
     glm::vec3 up;
     float fov;
+    float mouse_sensitivity;
+    float yaw;
+    float pitch;
+    float movement_speed;
 };
 
 struct EntityConfig {

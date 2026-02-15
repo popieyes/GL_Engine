@@ -170,7 +170,11 @@ int main()
 	mainScene.camera = new Camera(
 		camera_settings.position, 
 		camera_settings.position + camera_settings.lookAt, 
-		camera_settings.up);
+		camera_settings.up,
+		camera_settings.yaw,
+		camera_settings.pitch,
+		camera_settings.mouse_sensitivity,
+		camera_settings.movement_speed);
 	
 	Camera& camera = *mainScene.camera;
 	camera.SetPerspectiveProj(window_settings.width, window_settings.height, camera_settings.fov);

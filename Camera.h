@@ -8,11 +8,6 @@ enum CameraMovement {
 	RIGHT
 };
 
-const float SPEED = 2.5f;
-const float YAW = -90.0f;
-const float PITCH = 0.0f;
-const float SENSITIVITY = 0.1f;
-
 class Camera
 {
 public:
@@ -24,11 +19,12 @@ public:
 
 	float Yaw;
 	float Pitch;
-
+	float MaxYaw;
+	float MaxPitch;
 	float MovementSpeed;
 	float MouseSensitivity;
 	
-	Camera(glm::vec3 pos, glm::vec3 front, glm::vec3 up);
+	Camera(glm::vec3 pos, glm::vec3 front, glm::vec3 up, float maxYaw, float maxPitch, float mouseSensitivity, float mouseMovementSpeed);
 	
 	void SetOrtographicProj(int viewportW, int viewportH);
 	void SetPerspectiveProj(int viewportW, int viewportH, float fov);
