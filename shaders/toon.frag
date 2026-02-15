@@ -31,15 +31,15 @@ vec4 diffuseLight()
 {
     vec3 normal = normalize(Normal);
     vec3 lightDir = normalize(-dirLight.Dir);
-    float cosValue = max(dot(normal, lightDir),0.0f);
-    float intensity = smoothstep(0, 0.01, cosValue);
+    float NdotL = max(dot(normal, lightDir),0.0f);
+    float intensity = smoothstep(0, 0.01, NdotL);
     return vec4(intensity * dirLight.Color,1.0f);
 }
 
 vec4 specular_light()
 {
     float specularStrength = 1f;
-    float shininess = 64.0f;
+    float shininess = 16.0f;
     
     vec3 normal = normalize(Normal);
     vec3 lightDir = normalize(-dirLight.Dir);
@@ -56,11 +56,26 @@ vec4 specular_light()
     return vec4(specularStrength * intensity * dirLight.Color, 1.f);
 }
 
+vec4 rim_light()
+{
+    float rim_amount = 0.7f;
+    float rim_threshold = 0.1;
+    vec3 normal = normalize(Normal);
+    vec3 light_dir = normalize(-dirLight.Dir);
+    float NdotL = max(dot(normal, light_dir),0.0f);
+    vec3 view_dir = normalize(View_Pos - Vert_World_Pos);
+    float rim_dot = 1 - dot(view_dir, normal);
+    float rim_intensity = rim_dot * pow(NdotL, rim_threshold);
+    rim_intensity = smoothstep(rim_amount - 0.01, rim_amount + 0.01, rim_intensity);
+    return vec4(rim_intensity * vec4(1.0f,1.0f,1.0f,1.0f));
+}
+
 void main()
 {
     vec4 baseColor = texture(texture_diffuse1, texCoords);
     vec4 ambient_comp = ambient();
     vec4 diffuse_comp = diffuseLight();
     vec4 specular_comp = specular_light(); 
-    fragColor = baseColor * (diffuse_comp + ambient_comp + specular_comp); 
+    vec4 rim_comp = rim_light();
+    fragColor = vec4(0.5,0.5,0.5,1.0f) * (diffuse_comp + ambient_comp + specular_comp + rim_comp); 
 }

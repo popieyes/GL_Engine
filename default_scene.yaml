@@ -22,38 +22,16 @@ camera:
   
 # --- The Scene Graph ---
 entities:
-  - name: "Crysis Nano Suit"
+  - name: "Sphere"
     type: "mesh"
-    path: "models/crysis/nanosuit.obj"
+    path: "models/primitives/sphere.obj"
     transform:
-      position: [ 0.0, 0.0, 0.0 ]
+      position: [ 0.0, 1, 0.0 ]
       rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
       scale: [ 1.0, 1.0, 1.0 ]
     material:
       shader: "standard"
       texture_diffuse: "assets/textures/room_texture.png"
       shininess: 32.0
+      
   
-  - name: "Backpack"
-    type: "mesh"
-    path: "models/backpack/backpack.obj"
-    transform:
-      position: [ 5.0, 2.0, 0.0 ]
-      rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
-      scale: [ 1.0, 1.0, 1.0 ]
-    material:
-      shader: "standard"
-      texture_diffuse: "assets/textures/room_texture.png"
-      shininess: 32.0
-
-  - name: "Floor"
-    type: "mesh"
-    path: "models/plane/plane.obj"
-    transform:
-      position: [ 0.0, -0.5, 0.0 ]
-      rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
-      scale: [ 1.0, 1.0, 1.0 ]
-    material:
-      shader: "standard"
-      texture_diffuse: "assets/textures/room_texture.png"
-      shininess: 32.0

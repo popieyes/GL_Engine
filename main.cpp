@@ -48,6 +48,7 @@ void renderLoop(GLFWwindow* window, WindowSettings settings)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		mainScene.camera->UpdateView();
+		mainScene.mainShader->Use();
 		mainScene.mainShader->SetMat4("view", mainScene.camera->GetView());
 		mainScene.mainShader->SetVec3("View_Pos", mainScene.camera->Position);
 		/* Setup lights from the scene in the shader */
@@ -141,7 +142,9 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	stbi_set_flip_vertically_on_load(true);
-
+	
+	/* ====== SCENE DEFINITION ======= */
+	
 	mainScene = Scene();
 	
 	/* ===== ENTITIES LOAD ===== */
@@ -155,11 +158,12 @@ int main()
 		mainScene.AddModel(*new_model);
 	}
 
-	/* ====== SCENE DEFINITION ======= */
+	
 	mainScene.mainShader = new Shader("shaders/toon.vert", "shaders/toon.frag");
 	Shader& shader = *mainScene.mainShader;
 	shader.Use();
 	
+	/* ====== CAMERA SETTINGS ====== */
 	CameraSettings camera_settings = SceneLoader::GetCameraSettings();
 
 	mainScene.camera = new Camera(
@@ -177,7 +181,7 @@ int main()
 	shader.SetVec3("View_Pos", camera.Position); // Needs to be updated in Render Loop
 
 	
-	/* LIGHTING */
+	/* ====== LIGHTING ====== */
 	DirectionalLight* dirLight = new DirectionalLight(glm::vec3(0.0f, -1.0f, -0.5f));
 	dirLight->Color = glm::vec3(1.0f, 1.f, 1.f);
 	dirLight->Intensity = 1.f;
@@ -189,6 +193,7 @@ int main()
 	mainScene.AddLight(dirLight);
 	mainScene.AddLight(flashlight);
 	mainScene.AddLight(ambient_light);
+	
 	renderLoop(window, window_settings);
 
 	return code;
