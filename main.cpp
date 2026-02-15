@@ -1,11 +1,11 @@
 #pragma once
 #include "Common.h"
 #include "Scene.h"
-#include "DirectionalLight.h"
-#include "SpotLight.h"
-
-#define SCREEN_WIDTH 1600
-#define SCREEN_HEIGHT 1200
+#include "lights/DirectionalLight.h"
+#include "lights/SpotLight.h"
+#include "lights/AmbientLight.h"
+#include <yaml-cpp/yaml.h>
+#include "loaders/SceneLoader.h"
 
 int vertexColorLocation;
 
@@ -34,7 +34,7 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 }
-void renderLoop(GLFWwindow* window)
+void renderLoop(GLFWwindow* window, WindowSettings settings)
 {
 	while (!glfwWindowShouldClose(window))
 	{
@@ -44,7 +44,7 @@ void renderLoop(GLFWwindow* window)
 
 		processInput(window);
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(settings.clearColor.r, settings.clearColor.g, settings.clearColor.b, settings.clearColor.a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		mainScene.camera->UpdateView();
@@ -109,9 +109,9 @@ void mouse_callback(GLFWwindow* window, double xPosIn, double yPosIn)
 	mainScene.camera->ProcessMouse(xOffset, yOffset);
 }
 
-GLFWwindow* createWindow(int& code)
+GLFWwindow* createWindow(int& code, const WindowSettings& settings)
 {
-	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "GLGameEngine", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(settings.width, settings.height, settings.title.c_str(), NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -125,46 +125,55 @@ GLFWwindow* createWindow(int& code)
 	return window;
 }
 
+
 int main()
 {
+	// Load scene configuration
+	if (!SceneLoader::LoadScene("default_scene.yaml")) {
+		return -1;
+	}
+	WindowSettings window_settings = SceneLoader::GetWindowSettings();
+	
 	int code = 0;
-
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	GLFWwindow* window = createWindow(code);
+	GLFWwindow* window = createWindow(code, window_settings);
 	initGlad(code);
-	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glViewport(0, 0, window_settings.width, window_settings.height);
 	
 	glEnable(GL_DEPTH_TEST);
 
 	stbi_set_flip_vertically_on_load(true);
 
 	mainScene = Scene();
-
-	Model nanosuit(FileSystem::getPath("models/crysis/nanosuit.obj"));
-	Model plane(FileSystem::getPath("models/plane/plane.obj"));
-	Model backpack(FileSystem::getPath("models/backpack/backpack.obj"));
-
-	backpack.ModelMat = glm::translate(backpack.ModelMat, glm::vec3(5.0f, 2.0f, 0.0f));
-	/*context.models.push_back(nanosuit);
-	context.models.push_back(plane);
-	context.models.push_back(backpack);*/
-	vector<Model> models = { nanosuit, plane, backpack };
-	mainScene.AddModel(models);
 	
+	/* ===== ENTITIES LOAD ===== */
+	const vector<EntityConfig> entities_config = SceneLoader::GetEntities();
+	for (const EntityConfig& config : entities_config)
+	{
+		Model* new_model = new Model(FileSystem::getPath(config.meshPath));
+		new_model->ModelMat = scale(new_model->ModelMat, config.scale);
+		new_model->ModelMat = translate(new_model->ModelMat, config.position);
+		/*new_model->ModelMat = glm::rotate(glm::mat4(1.0f), entity.rotation);*/
+		mainScene.AddModel(*new_model);
+	}
+
+	/* ====== SCENE DEFINITION ======= */
 	mainScene.mainShader = new Shader("shaders/phong.vert", "shaders/phong.frag");
 	Shader& shader = *mainScene.mainShader;
 	shader.Use();
+	
+	CameraSettings camera_settings = SceneLoader::GetCameraSettings();
 
-	glm::vec3 cameraPos = glm::vec3(0.0f, 2.f, 10.0f);
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
-	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-	mainScene.camera = new Camera(cameraPos, cameraPos + cameraFront, cameraUp);
+	mainScene.camera = new Camera(
+		camera_settings.position, 
+		camera_settings.position + camera_settings.lookAt, 
+		camera_settings.up);
+	
 	Camera& camera = *mainScene.camera;
-	camera.SetPerspectiveProj(SCREEN_WIDTH, SCREEN_HEIGHT, 60.0f);
+	camera.SetPerspectiveProj(window_settings.width, window_settings.height, camera_settings.fov);
 	shader.SetMat4("projection", camera.GetProjection());
 	shader.SetVec3("View_Pos", camera.Position); // Needs to be updated in Render Loop
 
@@ -175,11 +184,13 @@ int main()
 	dirLight->Intensity = 1.0f;
 
 	SpotLight* flashlight = new SpotLight();
-
+	AmbientLight* ambient_light = new AmbientLight();
+	ambient_light->Intensity = 1.0f;
+	ambient_light->Color = glm::vec3(1.0f, 1.0f, 1.0f);
 	mainScene.AddLight(dirLight);
 	mainScene.AddLight(flashlight);
-
-	renderLoop(window);
+	mainScene.AddLight(ambient_light);
+	renderLoop(window, window_settings);
 
 	return code;
 }

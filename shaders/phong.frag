@@ -16,13 +16,18 @@ struct DirectionalLight {
 
 uniform DirectionalLight dirLight;
 
+struct AmbientLight {
+    float Intensity;
+    vec3 Color;
+};
+
+uniform AmbientLight ambient_light;
 uniform vec3 View_Pos;
 
 
 vec4 ambientLight()
 {
-	float ambientStrength = 0.1f;
-	return vec4(ambientStrength * dirLight.Color, 1.f);
+	return vec4(ambient_light.Intensity * ambient_light.Color, 1.f);
 }
 
 vec4 diffuseLight()

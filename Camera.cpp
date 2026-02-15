@@ -45,16 +45,28 @@ void Camera::ProcessMouse(float xOffset, float yOffset, GLboolean constrainPitch
 
 	Yaw = glm::mod(Yaw + xOffset, 360.0f);
 	Pitch += yOffset;
-
-	if (Pitch > 80.0f)
-		Pitch = 80.0f;
-	if (Pitch < -80.0f)
-		Pitch = -80.0f;
-
+	
+	Pitch = std::max(std::min(Pitch, 80.f), -80.0f);
+	
 	glm::vec3 direction;
-	direction.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-	direction.z = sin(glm::radians(Yaw));
-	direction.y = sin(glm::radians(Pitch)) * cos(glm::radians(Pitch));
+
+	// Convertir a radianes (glm usa radianes, no grados)
+	float rYaw = glm::radians(Yaw);
+	float rPitch = glm::radians(Pitch);
+
+	// Calcular Y (Altura)
+	// Solo depende de cuanto miras arriba/abajo
+	direction.y = sin(rPitch); 
+
+	// Calcular la longitud de la proyeccion en el suelo (la "sombra")
+	// Si miras muy arriba, esto se acerca a 0.
+	float sombra = cos(rPitch);
+
+	// Calcular X y Z usando esa sombra
+	direction.x = cos(rYaw) * sombra; // cos(yaw) * cos(pitch)
+	direction.z = sin(rYaw) * sombra; // sin(yaw) * cos(pitch)
+	
+	
 	Front = glm::normalize(direction);
 	Right = glm::normalize(glm::cross(Front, WorldUp));
 	Up = glm::normalize(glm::cross(Right, Front));

@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "Model.h"
-#include "Light.h"
+#include "./lights/Light.h"
 
 class Light;
 using namespace std;	
@@ -20,9 +20,9 @@ public:
 	Shader* mainShader;
 
 	void Setup();
-	void AddModel(Model model) { models.push_back(model); }
+	void AddModel(const Model& model) { models.push_back(model); }
 	void AddModel(vector <Model> models) {
-		for (Model model : models) { this->models.push_back(model); } }
+		for (Model& model : models) { this->models.push_back(model); } }
 	void AddCamera(Camera camera) { cameras.push_back(camera); }
 	void AddLight(Light* light) { lights.push_back(light); }
 };
