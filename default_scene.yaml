@@ -33,32 +33,5 @@ entities:
       shader: "standard"
       texture_diffuse: "assets/textures/room_texture.png"
       shininess: 32.0
-<<<<<<< HEAD
       
   
-=======
-  
-  - name: "Backpack"
-    type: "mesh"
-    path: "assets/models/backpack/backpack.obj"
-    transform:
-      position: [ 5.0, 2.0, 0.0 ]
-      rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
-      scale: [ 1.0, 1.0, 1.0 ]
-    material:
-      shader: "standard"
-      texture_diffuse: "assets/textures/room_texture.png"
-      shininess: 32.0
-
-  - name: "Floor"
-    type: "mesh"
-    path: "assets/models/plane/plane.obj"
-    transform:
-      position: [ 0.0, -0.5, 0.0 ]
-      rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
-      scale: [ 1.0, 1.0, 1.0 ]
-    material:
-      shader: "standard"
-      texture_diffuse: "assets/textures/room_texture.png"
-      shininess: 32.0
->>>>>>> development
