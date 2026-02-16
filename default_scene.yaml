@@ -24,7 +24,7 @@ camera:
 entities:
   - name: "Crysis Nano Suit"
     type: "mesh"
-    path: "models/crysis/nanosuit.obj"
+    path: "assets/models/crysis/nanosuit.obj"
     transform:
       position: [ 0.0, 0.0, 0.0 ]
       rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
@@ -36,7 +36,7 @@ entities:
   
   - name: "Backpack"
     type: "mesh"
-    path: "models/backpack/backpack.obj"
+    path: "assets/models/backpack/backpack.obj"
     transform:
       position: [ 5.0, 2.0, 0.0 ]
       rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
@@ -48,7 +48,7 @@ entities:
 
   - name: "Floor"
     type: "mesh"
-    path: "models/plane/plane.obj"
+    path: "assets/models/plane/plane.obj"
     transform:
       position: [ 0.0, -0.5, 0.0 ]
       rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
