@@ -1,5 +1,4 @@
-﻿#version 330 core
-
+#version 330 core
 out vec4 fragColor;
 
 in vec2 texCoords;
@@ -38,7 +37,7 @@ vec4 diffuseLight()
 
 vec4 specular_light()
 {
-    float specularStrength = 1f;
+    float specularStrength = 1.0f;
     float shininess = 16.0f;
     
     vec3 normal = normalize(Normal);

@@ -11,6 +11,9 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 
     try 
     {
+        // inside your Shader class, before ifstream or fopen
+        std::cout << "Vertex shader: " << vertexPath << std::endl;
+        std::cout << "Fragment shader at: " << fragmentPath << std::endl;
         vShaderFile.open(vertexPath);
         fShaderFile.open(fragmentPath);
         std::stringstream vShaderStream, fShaderStream;

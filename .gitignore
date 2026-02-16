@@ -12,6 +12,7 @@ Release/
 # Jetbrains
 .idea/
 
+.ai/
 # CMake temporary files
 build/
 CMakeCache.txt
