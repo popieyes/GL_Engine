@@ -30,6 +30,7 @@ struct EntityConfig {
     std::string name;
     std::string type; // "mesh" or "light"
     std::string meshPath;
+    std::string material;
     glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;

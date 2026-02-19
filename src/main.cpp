@@ -5,6 +5,7 @@
 #include "lights/AmbientLight.h"
 #include <yaml-cpp/yaml.h>
 #include "loaders/SceneLoader.h"
+#include "material/Material.h"
 
 int vertexColorLocation;
 
@@ -51,18 +52,23 @@ void renderLoop(GLFWwindow* window, WindowSettings settings)
 		mainScene.mainShader->SetMat4("view", mainScene.camera->GetView());
 		mainScene.mainShader->SetVec3("View_Pos", mainScene.camera->Position);
 		/* Setup lights from the scene in the shader */
-		for (Light* light : mainScene.lights)
-		{
-			light->Setup(*mainScene.mainShader);
-		}
+		
 
 		/* Draw models. All info in the shader should be uploaded by this point. */
 		for (unsigned int idx = 0; idx < mainScene.models.size(); idx++)
 		{
 			Model& gameObject = mainScene.models[idx];
+			gameObject.material.GetShader().Use();
+			gameObject.material.GetShader().SetMat4("model", gameObject.ModelMat);
+			gameObject.material.GetShader().SetMat4("view", mainScene.camera->GetView());
+			gameObject.material.GetShader().SetVec3("View_Pos", mainScene.camera->Position);
+			/* mainScene.mainShader->SetMat4("model", gameObject.ModelMat); */
 			
-			mainScene.mainShader->SetMat4("model", gameObject.ModelMat);
-			gameObject.Draw(*mainScene.mainShader);
+			for (Light* light : mainScene.lights)
+			{
+				light->Setup(gameObject.material.GetShader());
+			}
+			gameObject.Draw();
 		}
 		
 		glfwSwapBuffers(window);
@@ -146,25 +152,13 @@ int main()
 	
 	mainScene = Scene();
 	
-	/* ===== ENTITIES LOAD ===== */
-	const vector<EntityConfig> entities_config = SceneLoader::GetEntities();
-	for (const EntityConfig& config : entities_config)
-	{
-		Model* new_model = new Model(FileSystem::getPath(config.meshPath));
-		new_model->ModelMat = scale(new_model->ModelMat, config.scale);
-		new_model->ModelMat = translate(new_model->ModelMat, config.position);
-		/*new_model->ModelMat = glm::rotate(glm::mat4(1.0f), entity.rotation);*/
-		mainScene.AddModel(*new_model);
-	}
-
-	
-	mainScene.mainShader = new Shader("assets/shaders/toon.vert", "assets/shaders/toon.frag");
-	Shader& shader = *mainScene.mainShader;
-	shader.Use();
+	mainScene.mainShader = new Shader("assets/shaders/phong.vert", "assets/shaders/phong.frag");
+	Shader& phong_shader = *mainScene.mainShader;
+	Shader* toon_shader = new Shader("assets/shaders/toon.vert", "assets/shaders/toon.frag");
 	
 	/* ====== CAMERA SETTINGS ====== */
 	CameraSettings camera_settings = SceneLoader::GetCameraSettings();
-
+	
 	mainScene.camera = new Camera(
 		camera_settings.position, 
 		camera_settings.position + camera_settings.lookAt, 
@@ -173,13 +167,32 @@ int main()
 		camera_settings.pitch,
 		camera_settings.mouse_sensitivity,
 		camera_settings.movement_speed);
+		
+		Camera& camera = *mainScene.camera;
+		camera.SetPerspectiveProj(window_settings.width, window_settings.height, camera_settings.fov);
 	
-	Camera& camera = *mainScene.camera;
-	camera.SetPerspectiveProj(window_settings.width, window_settings.height, camera_settings.fov);
-	shader.SetMat4("projection", camera.GetProjection());
-	shader.SetVec3("View_Pos", camera.Position); // Needs to be updated in Render Loop
+	phong_shader.Use();
+	phong_shader.SetMat4("projection", camera.GetProjection());
+	phong_shader.SetVec3("View_Pos", camera.Position); // Needs to be updated in Render Loop
 
+	toon_shader->Use();
+	toon_shader->SetMat4("projection", camera.GetProjection());
+	toon_shader->SetVec3("View_Pos", camera.Position);
+
+	Material* toon_mat = new Material(*toon_shader);
+	Material* phong_mat = new Material(phong_shader);
 	
+	/* ===== ENTITIES LOAD ===== */
+	const vector<EntityConfig> entities_config = SceneLoader::GetEntities();
+	for (const EntityConfig& config : entities_config)
+	{
+		Model new_model(FileSystem::getPath(config.meshPath), config.material == "standard" ? *phong_mat : *toon_mat);
+		new_model.ModelMat = scale(new_model.ModelMat, config.scale);
+		new_model.ModelMat = translate(new_model.ModelMat, config.position);
+		/*new_model->ModelMat = glm::rotate(glm::mat4(1.0f), entity.rotation);*/
+		mainScene.AddModel(new_model);
+	}
+
 	/* ====== LIGHTING ====== */
 	DirectionalLight* dirLight = new DirectionalLight(glm::vec3(0.0f, -1.0f, -0.5f));
 	dirLight->Color = glm::vec3(1.0f, 1.f, 1.f);

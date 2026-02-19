@@ -3,5 +3,5 @@
 class AmbientLight : public Light
 {
 public:
-    void Setup(Shader& shader) override;
+    void Setup(const Shader& shader) const override;
 };

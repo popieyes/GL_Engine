@@ -64,7 +64,7 @@ bool SceneLoader::LoadScene(const std::string& filepath) {
                 // Basic info
                 entity.name = entityNode["name"].as<std::string>();
                 entity.type = entityNode["type"].as<std::string>();
-                
+                entity.material = entityNode["material"]["shader"].as<std::string>();
                 // Transform
                 if (entityNode["transform"]) {
                     entity.position = ParseVec3(entityNode["transform"]["position"]);

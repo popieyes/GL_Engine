@@ -30,6 +30,28 @@ entities:
       rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
       scale: [ 1.0, 1.0, 1.0 ]
     material:
+      shader: "toon"
+      texture_diffuse: "assets/textures/room_texture.png"
+      shininess: 32.0
+  - name: "Crysis Nanosuit"
+    type: "mesh"
+    path: "assets/models/crysis/nanosuit.obj"
+    transform:
+      position: [ 0.0, 1, 0.0 ]
+      rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
+      scale: [ 1.0, 1.0, 1.0 ]
+    material:
+      shader: "toon"
+      texture_diffuse: "assets/textures/room_texture.png"
+      shininess: 32.0
+  - name: "Plane"
+    type: "mesh"
+    path: "assets/models/plane/plane.obj"
+    transform:
+      position: [ 0.0, -1, 0.0 ]
+      rotation: [ 0.0, -90.0, 0.0 ] # Euler angles in degrees
+      scale: [ 1.0, 1.0, 1.0 ]
+    material:
       shader: "standard"
       texture_diffuse: "assets/textures/room_texture.png"
       shininess: 32.0

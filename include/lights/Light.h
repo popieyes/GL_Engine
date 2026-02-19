@@ -10,6 +10,6 @@ public:
 	float Intensity = 1.0f;
 	bool castShadows = true;
 
-	virtual void Setup(Shader& shader) {}
+	virtual void Setup(const Shader& shader) const {}
 };
 
