@@ -12,8 +12,11 @@ find_package(glm REQUIRED)
 find_package(assimp REQUIRED)
 # Use pkg_check_modules for yaml-cpp for security in Ubuntu
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(YAML_CPP REQUIRED yaml-cpp) # robust way to find yaml-cpp on Linux
-
+if(WIN32)
+	find_package(yaml-cpp CONFIG REQUIRED)
+else()
+	pkg_check_modules(YAML_CPP REQUIRED yaml-cpp) # robust way to find yaml-cpp on Linux
+endif()
 # Recursive search in src of .cpp files
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.c")
 
@@ -35,7 +38,7 @@ target_link_libraries(${PROJECT_NAME}
 	glfw
 	glm::glm
 	assimp::assimp
-	${YAML_CPP_LIBRARIES}
+	yaml-cpp::yaml-cpp
 	${CMAKE_DL_LIBS} # Needed for some loaders like GLAD
 )
 
