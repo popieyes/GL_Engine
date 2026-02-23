@@ -1,2 +1,20 @@
+# Visual Studio files
 .vs/
-/GL_Engine/x64
+out/
+x64/
+Debug/
+Release/
+*.user
+*.sln
+*.vcxproj
+*.filters
+ 
+# Jetbrains
+.idea/
+
+.ai/
+# CMake temporary files
+build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
