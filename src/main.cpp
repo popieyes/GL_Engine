@@ -6,6 +6,7 @@
 #include <yaml-cpp/yaml.h>
 #include "loaders/SceneLoader.h"
 #include "material/Material.h"
+#include "textures/CubeMap.h"
 
 int vertexColorLocation;
 
@@ -34,48 +35,7 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 }
-void renderLoop(GLFWwindow* window, WindowSettings settings)
-{
-	while (!glfwWindowShouldClose(window))
-	{
-		float currentFrame = static_cast<float>(glfwGetTime());
-		context.deltaTime = currentFrame - context.lastFrame;
-		context.lastFrame = currentFrame;
 
-		processInput(window);
-
-		glClearColor(settings.clearColor.r, settings.clearColor.g, settings.clearColor.b, settings.clearColor.a);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		mainScene.camera->UpdateView();
-		mainScene.mainShader->Use();
-		mainScene.mainShader->SetMat4("view", mainScene.camera->GetView());
-		mainScene.mainShader->SetVec3("View_Pos", mainScene.camera->Position);
-		/* Setup lights from the scene in the shader */
-		
-
-		/* Draw models. All info in the shader should be uploaded by this point. */
-		for (unsigned int idx = 0; idx < mainScene.models.size(); idx++)
-		{
-			Model& gameObject = mainScene.models[idx];
-			gameObject.material.GetShader().Use();
-			gameObject.material.GetShader().SetMat4("model", gameObject.ModelMat);
-			gameObject.material.GetShader().SetMat4("view", mainScene.camera->GetView());
-			gameObject.material.GetShader().SetVec3("View_Pos", mainScene.camera->Position);
-			/* mainScene.mainShader->SetMat4("model", gameObject.ModelMat); */
-			
-			for (Light* light : mainScene.lights)
-			{
-				light->Setup(gameObject.material.GetShader());
-			}
-			gameObject.Draw();
-		}
-		
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-	glfwTerminate();
-}
 void initGlad(int& code)
 {
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -155,7 +115,7 @@ int main()
 	mainScene.mainShader = new Shader("assets/shaders/phong.vert", "assets/shaders/phong.frag");
 	Shader& phong_shader = *mainScene.mainShader;
 	Shader* toon_shader = new Shader("assets/shaders/toon.vert", "assets/shaders/toon.frag");
-	
+	Shader& skyboxShader = *new Shader("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
 	/* ====== CAMERA SETTINGS ====== */
 	CameraSettings camera_settings = SceneLoader::GetCameraSettings();
 	
@@ -206,7 +166,73 @@ int main()
 	mainScene.AddLight(flashlight);
 	mainScene.AddLight(ambient_light);
 	
-	renderLoop(window, window_settings);
+	/* ==== SKYBOX ==== */
+	vector<std::string> skybox_faces = {
+		"assets/images/skybox/right.jpg",
+		"assets/images/skybox/left.jpg",
+		"assets/images/skybox/top.jpg",
+		"assets/images/skybox/bottom.jpg",
+		"assets/images/skybox/front.jpg",
+		"assets/images/skybox/back.jpg"
+	};
+	CubeMap skybox(512, 512, 3, skybox_faces);
+	/* ==== END ==== */
+	
+	/* ==== RENDER LOOP ==== */
+	while (!glfwWindowShouldClose(window))
+	{
+		float currentFrame = static_cast<float>(glfwGetTime());
+		context.deltaTime = currentFrame - context.lastFrame;
+		context.lastFrame = currentFrame;
+
+		processInput(window);
+
+		glClearColor(window_settings.clearColor.r, window_settings.clearColor.g, window_settings.clearColor.b, window_settings.clearColor.a);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+
+		mainScene.camera->UpdateView();
+		mainScene.mainShader->Use();
+		mainScene.mainShader->SetMat4("view", mainScene.camera->GetView());
+		mainScene.mainShader->SetVec3("View_Pos", mainScene.camera->Position);
+		/* Setup lights from the scene in the shader */
+		
+
+		/* Draw models. All info in the shader should be uploaded by this point. */
+		for (unsigned int idx = 0; idx < mainScene.models.size(); idx++)
+		{
+			Model& gameObject = mainScene.models[idx];
+			gameObject.material.GetShader().Use();
+			gameObject.material.GetShader().SetMat4("model", gameObject.ModelMat);
+			gameObject.material.GetShader().SetMat4("view", mainScene.camera->GetView());
+			gameObject.material.GetShader().SetVec3("View_Pos", mainScene.camera->Position);
+			/* mainScene.mainShader->SetMat4("model", gameObject.ModelMat); */
+			
+			for (Light* light : mainScene.lights)
+			{
+				light->Setup(gameObject.material.GetShader());
+			}
+			gameObject.Draw();
+		}
+		/* ==== RENDER SKYBOX ==== */
+		glDepthFunc(GL_LEQUAL);
+		skyboxShader.Use();
+		skyboxShader.SetMat4("view", glm::mat4(glm::mat3(mainScene.camera->GetView())));
+		skyboxShader.SetMat4("projection", mainScene.camera->GetProjection());
+		glBindVertexArray(skybox.VAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.ID);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LESS);
+		/* ==== END ==== */
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+	glfwTerminate();
+	/* ==== END ==== */
+	/* renderLoop(window, window_settings); */
 
 	return code;
 }
