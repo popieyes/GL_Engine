@@ -1,4 +1,4 @@
-# 🕹️ OpenGL Game Engine
+# 🕹️ OpenGL Engine
 
 This repository contains a small OpenGL-based game engine currently in development. It is inspired by the [LearnOpenGL](https://learnopengl.com/) tutorial series and serves as a modular foundation for real-time rendering and game logic.
 
