@@ -147,6 +147,7 @@ int main()
 	for (const EntityConfig& config : entities_config)
 	{
 		Model new_model(FileSystem::getPath(config.meshPath), config.material == "standard" ? *phong_mat : *toon_mat);
+		new_model.material.Color = config.color; 
 		new_model.ModelMat = scale(new_model.ModelMat, config.scale);
 		new_model.ModelMat = translate(new_model.ModelMat, config.position);
 		/*new_model->ModelMat = glm::rotate(glm::mat4(1.0f), entity.rotation);*/
@@ -206,6 +207,7 @@ int main()
 			gameObject.material.GetShader().SetMat4("model", gameObject.ModelMat);
 			gameObject.material.GetShader().SetMat4("view", mainScene.camera->GetView());
 			gameObject.material.GetShader().SetVec3("View_Pos", mainScene.camera->Position);
+			gameObject.material.GetShader().SetVec4("material_color", gameObject.material.Color);
 			/* mainScene.mainShader->SetMat4("model", gameObject.ModelMat); */
 			
 			for (Light* light : mainScene.lights)

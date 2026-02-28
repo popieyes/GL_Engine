@@ -15,9 +15,9 @@ unsigned int TextureFromFile(const char* path, const string& directory, bool gam
 class Model
 {
 public:
-    vector<Texture> textures_loaded;
-    vector<Mesh> meshes;
-    string directory;
+	vector<Texture> textures_loaded;
+	vector<Mesh> meshes;
+	string directory;
     bool gammaCorrection;
 	glm::mat4 ModelMat = glm::mat4(1.0f);
 	Material& material;

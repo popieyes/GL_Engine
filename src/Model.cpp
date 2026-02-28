@@ -106,6 +106,18 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	// 1. diffuse maps
 	vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+
+	// 1.1 If no diffuse maps are present, add a default white texture
+	if (diffuseMaps.size() == 0)
+	{
+		Texture texture;
+		texture.ID = TextureFromFile("white.jpg", this->directory);
+		texture.Type = "texture_diffuse";
+		texture.Path = this->directory + "/white.jpg";
+		textures.push_back(texture);
+		textures_loaded.push_back(texture);
+	}
+
 	// 2. specular maps
 	vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
@@ -184,7 +196,7 @@ unsigned int TextureFromFile(const char* path, const string& directory, bool gam
 	}
 	else
 	{
-		std::cout << "Texture failed to load at path: " << path << std::endl;
+		std::cout << "Texture failed to load at path: " << filename << std::endl;
 		stbi_image_free(data);
 	}
 

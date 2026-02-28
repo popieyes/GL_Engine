@@ -6,6 +6,7 @@ in vec3 Normal;
 in vec3 Vert_World_Pos;
 uniform vec3 View_Pos;
 
+uniform vec4 material_color;
 uniform sampler2D texture_diffuse1;
 struct DirectionalLight {
     vec3 Dir;
@@ -71,10 +72,10 @@ vec4 rim_light()
 
 void main()
 {
-    vec4 baseColor = texture(texture_diffuse1, texCoords);
+    vec4 baseColor = material_color * texture(texture_diffuse1, texCoords);
     vec4 ambient_comp = ambient();
     vec4 diffuse_comp = diffuseLight();
     vec4 specular_comp = specular_light(); 
     vec4 rim_comp = rim_light();
-    fragColor = vec4(0.5,0.5,0.5,1.0f) * (diffuse_comp + ambient_comp + specular_comp + rim_comp); 
+    fragColor = baseColor * (diffuse_comp + ambient_comp + specular_comp + rim_comp); 
 }

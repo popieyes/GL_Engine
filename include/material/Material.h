@@ -10,6 +10,7 @@ class Material
 {
 
 public:
+    glm::vec4 Color = glm::vec4(1.0f);
     Material(const Shader& shader);
     void Apply();
     const Shader& GetShader();
