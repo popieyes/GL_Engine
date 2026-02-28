@@ -4,10 +4,10 @@ This repository contains a small OpenGL-based game engine currently in developme
 
 ## 🚧 Preview
 
-![Screenshot](assets/images/15-02-26.png)
+![Screenshot](assets/images/28-02-26.png)
 
 ## 📦 Features
-
+- C-Make prepared project 
 - Shader classes
 - Mesh and model loading via Assimp
 - Texture loading with stb_image
@@ -15,7 +15,7 @@ This repository contains a small OpenGL-based game engine currently in developme
 - Cubemap / Skybox implementation
 - Directional Lighting
 - Basic Phong Shading & Basic Toon Shading
-
+- YAML Scene Definition
 ## 🛠️ Dependencies
 
 To build and run the engine, you’ll need to compile and link the following libraries:
