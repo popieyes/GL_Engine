@@ -7,6 +7,8 @@
 #include "loaders/SceneLoader.h"
 #include "material/Material.h"
 #include "textures/CubeMap.h"
+#include "ui/Editor.h"
+#include "utils/FrameBuffer.h"
 
 int vertexColorLocation;
 
@@ -82,7 +84,7 @@ GLFWwindow* createWindow(int& code, const WindowSettings& settings)
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	return window;
 }
 
@@ -108,6 +110,11 @@ int main()
 
 	stbi_set_flip_vertically_on_load(true);
 	
+	FrameBuffer scene_fbo(window_settings.width, window_settings.height);
+
+	Editor editor(scene_fbo);
+	editor.Init(window);
+
 	/* ====== SCENE DEFINITION ======= */
 	
 	mainScene = Scene();
@@ -182,11 +189,15 @@ int main()
 	/* ==== RENDER LOOP ==== */
 	while (!glfwWindowShouldClose(window))
 	{
+		editor.BeginFrame();
+
 		float currentFrame = static_cast<float>(glfwGetTime());
 		context.deltaTime = currentFrame - context.lastFrame;
 		context.lastFrame = currentFrame;
 
 		processInput(window);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, scene_fbo.ID);
 
 		glClearColor(window_settings.clearColor.r, window_settings.clearColor.g, window_settings.clearColor.b, window_settings.clearColor.a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -227,12 +238,16 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS);
-		/* ==== END ==== */
 
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_COLOR_BUFFER_BIT);
+		/* ==== END ==== */
+		editor.Render();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 	glfwTerminate();
+	editor.Shutdown();
 	/* ==== END ==== */
 	/* renderLoop(window, window_settings); */
 
