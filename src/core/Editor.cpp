@@ -1,14 +1,20 @@
-#include "ui/Editor.h"
+#include "core/Engine.h"
+#include "core/Editor.h"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
+#include "utils/Logger.h"
 
-Editor::Editor(FrameBuffer& fbo) : scene_fbo(fbo) {}
+Editor::Editor(Engine* eng) : engine(eng) {
+  if(engine == nullptr) {
+    CORE_ERROR("Editor initialized with null engine pointer!");
+  }
+}
 Editor::~Editor() {
   Shutdown();
 }
-void Editor::Init(GLFWwindow* window)
+void Editor::Init()
 {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -19,7 +25,14 @@ void Editor::Init(GLFWwindow* window)
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
   ImGui::StyleColorsDark();
-  ImGui_ImplGlfw_InitForOpenGL(window, true);
+  CORE_INFO("ImGui context created and style set.");
+  GLFWwindow* window = engine->GetWindow();
+  if (!window) {
+    CORE_ERROR("Failed to get GLFW window from engine. ImGui initialization aborted.");
+    return;
+  }
+  ImGui_ImplGlfw_InitForOpenGL(engine->GetWindow(), true);
+  CORE_INFO("ImGui GLFW backend initialized.");
   ImGui_ImplOpenGL3_Init("#version 330");
 }
 
@@ -105,7 +118,7 @@ void Editor::CreateSceneViewport()
   ImGui::Begin("Scene Viewport");  
 
   ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
-  uint32_t textureID = scene_fbo.GetColorTextureID();
+  uint32_t textureID = engine->GetSceneTextureID();
 
   // Draw the texture. 
   // Note: OpenGL renders upside down relative to ImGui. 

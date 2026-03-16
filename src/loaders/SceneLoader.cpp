@@ -86,11 +86,11 @@ bool SceneLoader::LoadScene(const std::string& filepath) {
         return true;
     }
     catch (YAML::ParserException& e) {
-        std::cerr << "Failed to parse YAML: " << e.what() << std::endl;
+        std::cout << "Failed to parse YAML: " << e.what() << std::endl;
         return false;
     }
     catch (std::exception& e) {
-        std::cerr << "Error loading scene: " << e.what() << std::endl;
+        std::cout << "Error loading scene: " << e.what() << std::endl;
         return false;
     }
 }
