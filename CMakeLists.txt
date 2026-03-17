@@ -28,8 +28,10 @@ find_package(assimp REQUIRED)
 find_package(PkgConfig REQUIRED)
 if(WIN32)
 	find_package(yaml-cpp CONFIG REQUIRED)
+	set(YAML_LIB yaml-cpp::yaml-cpp)
 else()
 	pkg_check_modules(YAML_CPP REQUIRED yaml-cpp) # robust way to find yaml-cpp on Linux
+	set(YAML_LIB yaml-cpp)
 endif()
 # Recursive search in src of .cpp files
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.c")
@@ -54,7 +56,7 @@ target_link_libraries(${PROJECT_NAME}
 	glfw
 	glm::glm
 	assimp::assimp
-	yaml-cpp::yaml-cpp
+	${YAML_LIB}
 	${CMAKE_DL_LIBS} # Needed for some loaders like GLAD
 
 )
