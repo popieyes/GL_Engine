@@ -6,6 +6,7 @@
 
 struct GLFWwindow;
 class Scene;
+class Editor;
 
 
 class Engine {
@@ -28,7 +29,8 @@ class Engine {
     GLFWwindow* window;
     WindowSettings window_settings;
     FrameBuffer* scene_fbo; 
-    
+    Editor* editor;
+
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     
