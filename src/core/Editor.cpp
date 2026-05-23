@@ -1,5 +1,6 @@
 #include "core/Engine.h"
 #include "core/Editor.h"
+#include "core/Event.h"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -117,6 +118,17 @@ void Editor::CreateGameViewport()
   ImGui::SetNextWindowSizeConstraints(ImVec2(400 , 300), ImVec2(4000, 4000));
   ImGui::Begin("Game Viewport");  
 
+  bool isHovered = ImGui::IsWindowHovered();
+  bool isRightClick = ImGui::IsMouseDown(ImGuiMouseButton_Right);
+
+  static bool wasActive = false;
+  bool isActive = isHovered && isRightClick;
+
+  if(isActive != wasActive) {
+    ViewportFocusEvent e(isActive);
+    m_Dispatcher->Dispatch(e);
+    wasActive = isActive;
+  }
   ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
   uint32_t textureID = engine->GetSceneTextureID();
 
