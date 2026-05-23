@@ -103,7 +103,7 @@ void Editor::CreateEditorLayout()
   }
 
 
-  CreateSceneViewport();
+  /* CreateSceneViewport(); */
   CreateGameViewport();
   CreateSceneHierarchy();
   CreateInspector();
@@ -111,11 +111,11 @@ void Editor::CreateEditorLayout()
   ImGui::End();
 }
 
-void Editor::CreateSceneViewport()
+void Editor::CreateGameViewport()
 {
   // Force a minimum size so it doesn't collapse into a tiny square
   ImGui::SetNextWindowSizeConstraints(ImVec2(400 , 300), ImVec2(4000, 4000));
-  ImGui::Begin("Scene Viewport");  
+  ImGui::Begin("Game Viewport");  
 
   ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
   uint32_t textureID = engine->GetSceneTextureID();
@@ -132,10 +132,10 @@ void Editor::CreateSceneViewport()
   ImGui::End();
 }
 
-void Editor::CreateGameViewport()
+void Editor::CreateSceneViewport()
 {
-  ImGui::Begin("Game Viewport");
-  ImGui::Text("Game view will be rendered here");
+  ImGui::Begin("Scene Viewport");
+  ImGui::Text("Scene view will be rendered here");
   ImGui::End();
 }
 

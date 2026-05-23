@@ -4,15 +4,14 @@
 
 int main()
 {
-	CORE_INFO("Starting GL Engine...");
+	CORE_INFO("Initializing Graphics API...");
 	Engine* engine = new Engine();
 
-	CORE_INFO("GL Engine initialized.");
 	const int success = engine->Setup();
 	if (success != 0) {
 		return success;
 	}
-	CORE_INFO("Engine initialized successfully.");
+	CORE_INFO("API initialized successfully.");
 
 	CORE_INFO("Creating Editor...");
 	Editor editor(engine);
