@@ -30,7 +30,7 @@ class Engine {
     WindowSettings window_settings;
     FrameBuffer* scene_fbo; 
     Editor* editor;
-
+    
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
     

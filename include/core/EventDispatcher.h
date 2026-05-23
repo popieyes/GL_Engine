@@ -20,4 +20,4 @@ class EventDispatcher {
     private:
     std::unordered_map<EventType, std::vector<EventCallback>> m_Subscribers;
 
-}
+};

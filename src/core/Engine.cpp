@@ -1,8 +1,8 @@
 #include "loaders/SceneLoader.h"
 #include "core/Engine.h"
-#include "core/EventDispatcher.h"
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
+#include "core/EventDispatcher.h"
 #include <iostream>
 #include <stb_image.h>
 #include "Scene.h"
@@ -41,7 +41,7 @@ Engine::Engine()
   glfwSetWindowUserPointer(window, this);
 	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
 	glfwSetCursorPosCallback(window, MouseCallback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -61,18 +61,6 @@ Engine::Engine()
 Engine::~Engine() {}
 
 const int Engine::Setup() {
-
-	dispatcher.Subscribe(EventType::ViewportActive, [this](Event& e)) {
-		auto& focusEvent = static_cast<ViewportFocusEvent>(e);
-		this-> isCameraLocked = focusEvent.IsActive;
-
-		if(focusEvent.IsActive) {
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		}
-		else {
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		}
-	}
 
   /* ====== SCENE DEFINITION ======= */
 	

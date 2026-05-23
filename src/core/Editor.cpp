@@ -126,7 +126,6 @@ void Editor::CreateGameViewport()
 
   if(isActive != wasActive) {
     ViewportFocusEvent e(isActive);
-    m_Dispatcher->Dispatch(e);
     wasActive = isActive;
   }
   ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();

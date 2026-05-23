@@ -40,7 +40,8 @@ file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.c")
 add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCES})
 
 # Pass the folder path to C++ as a string macro
-target_compile_definitions(${PROJECT_NAME} PRIVATE ROOT_DIR=\"${CMAKE_SOURCE_DIR}\")
+target_compile_definitions(${PROJECT_NAME} PRIVATE ROOT_DIR="${CMAKE_SOURCE_DIR}/")
+
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
 	"include" # local header folder
