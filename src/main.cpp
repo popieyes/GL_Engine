@@ -1,39 +1,39 @@
-#include "core/Editor.h"
+#include "vulkan/vkEditor.h"
+#include "vulkan/vkEngine.h"
 #include "core/Engine.h"
 #include "utils/Logger.h"
 
 int main()
 {
 	CORE_INFO("Initializing Graphics API...");
-	Engine* engine = new Engine();
+	VKEngine* engine = new VKEngine();
 
-	const int success = engine->Setup();
-	if (success != 0) {
-		return success;
-	}
+	if (engine->Setup() != 0)  return -1;
+
 	CORE_INFO("API initialized successfully.");
 
-	CORE_INFO("Creating Editor...");
-	Editor editor(engine);
-	CORE_INFO("Initializing Editor...");
+	/* CORE_INFO("Creating Editor..."); */
+	/* GLEditor editor(engine); */
+	/* VulkanEditor editor(engine); */
+	/* CORE_INFO("Initializing Editor...");
 	editor.Init();
-	CORE_INFO("Editor initialized successfully.");
+	CORE_INFO("Editor initialized successfully."); */
 	
 	/* ==== RENDER LOOP ==== */
-	while (engine->IsRunning())
-	{
-		editor.BeginFrame();
+	/* while (engine->IsRunning())
+	{ */
+		/* editor.BeginFrame(); */
 		engine->BeginFrame();
 
 		engine->ProcessInput();
 		engine->Run();
-		editor.Render();
+		/* editor.Render(); */
 		
 		engine->EndFrame();
-	}
-	CORE_INFO("Shutting down engine and editor...");
+	/* } */
+	CORE_INFO("Shutting down engine (and editor)...");
 	engine->Shutdown();
-	editor.Shutdown();
+	/* editor.Shutdown(); */
 	/* ==== END ==== */
 	return 0;
 }

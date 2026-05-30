@@ -14,10 +14,10 @@ class Engine {
     Engine();
     ~Engine();
 
-    const int Setup();
-    void BeginFrame();
-    void EndFrame();
-    void Run();
+    virtual const int Setup() = 0;
+    virtual void BeginFrame() = 0;
+    virtual void EndFrame() = 0;
+    virtual void Run() = 0;
     void Shutdown();
     void ProcessInput();
     
@@ -25,7 +25,8 @@ class Engine {
     GLFWwindow* GetWindow() const { return window; }
 
     const unsigned int GetSceneTextureID() const { return scene_fbo->GetColorTextureID(); }
-  private: 
+
+  protected:
     GLFWwindow* window;
     WindowSettings window_settings;
     FrameBuffer* scene_fbo; 

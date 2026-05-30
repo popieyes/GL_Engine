@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.28) # Native C++20 Module support features
 project(Hernan_Engine)
 
 # Add option to enable/disable C++ 20 module
-option(ENABLE_CPP20_MODULE "Enable C++ 20 module support for Vulkan" ON)
+option(ENABLE_CPP20_MODULE "Enable C++ 20 module support for Vulkan" OFF)
 # Enable C++ module dependency scanning only if C++ 20 module is enabled
 if(ENABLE_CPP20_MODULE)
   set(CMAKE_CXX_SCAN_FOR_MODULES ON)
@@ -33,6 +33,9 @@ endif()
 
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.c")
 list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+# Backend-specific sources are compiled into their own libraries below,
+# so exclude them from EngineCore to avoid duplicate-symbol link errors.
+list(FILTER SOURCES EXCLUDE REGEX "/src/(opengl|vulkan)/")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/VKTemplate/cmake")
 
@@ -78,6 +81,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/default_scene.yaml DESTINATION ${CMAKE_BINARY_DIR}
 set(GL_SOURCES
 	${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
   src/opengl/glEditor.cpp
+  src/opengl/glEngine.cpp
 )
 
 add_library(EngineBackend_GL STATIC 
@@ -205,7 +209,7 @@ set (ENTRY_POINTS -entry vertMain -entry fragMain)
 add_custom_command(OUTPUT ${SHADERS_DIR} COMMAND ${CMAKE_COMMAND} -E make_directory ${SHADERS_DIR})
 add_custom_command(
   OUTPUT  ${SHADERS_DIR}/slang.spv
-  COMMAND ${SLANGC_EXECUTABLE} ${SHADER_SOURCES} -target spirv -profile spirv_1_4 -emit-spirv-directly -fvk-use-entrypoint-name ${ENTRY_POINTS} -o ${TEMPLATE_DIR}/shaders/slang.spv
+  COMMAND ${SLANGC_EXECUTABLE} ${SHADER_SOURCES} -target spirv -profile spirv_1_4 -emit-spirv-directly -fvk-use-entrypoint-name ${ENTRY_POINTS} -o ${SHADERS_DIR}/slang.spv
   WORKING_DIRECTORY ${SHADERS_DIR}
   DEPENDS ${SHADERS_DIR} ${SHADER_SOURCES}
   COMMENT "Compiling Slang Shaders"

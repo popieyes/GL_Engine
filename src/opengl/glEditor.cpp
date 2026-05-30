@@ -2,9 +2,10 @@
 #include "core/Editor.h"
 #include "core/Event.h"
 #include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
 #include "utils/Logger.h"
-
 
 Editor::Editor(Engine* eng) : engine(eng) {
   if(engine == nullptr) {
@@ -14,7 +15,6 @@ Editor::Editor(Engine* eng) : engine(eng) {
 Editor::~Editor() {
   Shutdown();
 }
-
 void Editor::Init()
 {
   IMGUI_CHECKVERSION();
@@ -26,21 +26,38 @@ void Editor::Init()
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
   ImGui::StyleColorsDark();
-  
-  OnInitBackend();
+  CORE_INFO("ImGui context created and style set.");
+  GLFWwindow* window = engine->GetWindow();
+  if (!window) {
+    CORE_ERROR("Failed to get GLFW window from engine. ImGui initialization aborted.");
+    return;
+  }
+  ImGui_ImplGlfw_InitForOpenGL(engine->GetWindow(), true);
+  CORE_INFO("ImGui GLFW backend initialized.");
+  ImGui_ImplOpenGL3_Init("#version 330");
 }
 
 void Editor::BeginFrame()
 {
-  OnBeginFrameBackend();
-
+  ImGui_ImplOpenGL3_NewFrame();
+  ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
   CreateEditorLayout();
 }
 void Editor::Render()
 {
   ImGui::Render();
-  OnRenderBackend();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+  if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        // Viewports need the current context to be backed up and restored
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        glfwMakeContextCurrent(backup_current_context);
+    }
+  
 }
 
 
@@ -48,7 +65,8 @@ void Editor::Shutdown()
 {
   if(ImGui::GetCurrentContext() != nullptr)
   {
-    OnShutdownBackend();
+    ImGui_ImplOpenGL3_Shutdown();
+	  ImGui_ImplGlfw_Shutdown();
 	  ImGui::DestroyContext();
   }
 }
