@@ -23,14 +23,24 @@ class VKEngine : public Engine {
     vk::raii::Device device = nullptr;
     vk::raii::SurfaceKHR surface = nullptr;
     vk::raii::Queue graphicsQueue = nullptr;
+    vk::raii::SwapchainKHR swapChain = nullptr;
+    std::vector<vk::Image> swapChainImages;
+    std::vector<vk::raii::ImageView> swapChainImageViews;
+    vk::SurfaceFormatKHR swapChainSurfaceFormat;
+    vk::Extent2D swapChainExtent;
 
     void CreateInstance();
     void SetupDebugMessenger();
     void CreateSurface();
     void SelectPhysicalDevice();
     void CreateLogicalDevice();
+    void CreateSwapchain();
 
 
     std::vector<const char*> GetRequiredInstanceExtensions();
     bool IsDeviceSuitable(vk::raii::PhysicalDevice const& device);
+    vk::SurfaceFormatKHR ChooseSwapSurfaceFormat(std::vector<vk::SurfaceFormatKHR> const &availableFormats);
+    vk::Extent2D ChooseSwapExtent(vk::SurfaceCapabilitiesKHR const &surfaceCapabilities);
+    uint32_t ChooseSwapMinImageCount(vk::SurfaceCapabilitiesKHR  const &surfaceCapabilities);
+    vk::PresentModeKHR ChooseSwapPresentMode(std::vector<vk::PresentModeKHR> const &availablePresentMode);
 };

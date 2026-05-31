@@ -6,6 +6,9 @@
 #include <cstring>
 #include <iterator>
 #include <string>
+#include <algorithm>
+#include <limits>
+#include <cstdint>
 
 const std::vector<char const*> validationLayers = {
   "VK_LAYER_KHRONOS_validation"
@@ -42,13 +45,12 @@ const int VKEngine::Setup() {
     return 1;
 	}
 
-  
-
   CreateInstance();
   SetupDebugMessenger();
   CreateSurface();
   SelectPhysicalDevice();
   CreateLogicalDevice();
+  CreateSwapchain();
 
   return 0;
 }
@@ -235,4 +237,80 @@ bool VKEngine::IsDeviceSuitable(vk::raii::PhysicalDevice const& physicalDevice)
       throw std::runtime_error("Failed to create window surface!");
     }
     surface = vk::raii::SurfaceKHR(instance, _surface);
+  }
+
+  void VKEngine::CreateSwapchain()
+  {
+    vk::SurfaceCapabilitiesKHR surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR( *surface);
+    swapChainExtent = ChooseSwapExtent(surfaceCapabilities);
+    uint32_t minImageCount = ChooseSwapMinImageCount(surfaceCapabilities);
+
+    std::vector<vk::SurfaceFormatKHR> availableFormats = physicalDevice.getSurfaceFormatsKHR(*surface);
+    swapChainSurfaceFormat  = ChooseSwapSurfaceFormat(availableFormats);
+
+    std::vector<vk::PresentModeKHR> availablePresentModes = physicalDevice.getSurfacePresentModesKHR(*surface);
+    vk::PresentModeKHR presentMode = ChooseSwapPresentMode(availablePresentModes);
+
+
+    vk::SwapchainCreateInfoKHR swapChainCreateInfo{.surface = *surface,
+                                                   .minImageCount = minImageCount,
+                                                  .imageFormat = swapChainSurfaceFormat.format,
+                                                  .imageColorSpace = swapChainSurfaceFormat.colorSpace,
+                                                  .imageExtent = swapChainExtent,
+                                                  .imageArrayLayers = 1,
+                                                  .imageUsage = vk::ImageUsageFlagBits::eColorAttachment,
+                                                  .imageSharingMode = vk::SharingMode::eExclusive,
+                                                  .preTransform = surfaceCapabilities.currentTransform,
+                                                  .compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque,
+                                                  .presentMode = presentMode,
+                                                  .clipped = true
+
+    };
+
+    swapChainCreateInfo.oldSwapchain = nullptr;
+
+    swapChain = vk::raii::SwapchainKHR(device, swapChainCreateInfo);
+    swapChainImages = swapChain.getImages();
+  }
+
+  vk::Extent2D VKEngine::ChooseSwapExtent(vk::SurfaceCapabilitiesKHR const &surfaceCapabilities)
+  {
+    if (surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+    {
+      return surfaceCapabilities.currentExtent;
+    }
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+
+    return {
+        std::clamp<uint32_t>(width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width),
+        std::clamp<uint32_t>(height, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height)
+    };
+  }
+
+  uint32_t VKEngine::ChooseSwapMinImageCount(vk::SurfaceCapabilitiesKHR  const &surfaceCapabilities)
+  {
+     auto minImageCount = std::max(3u, surfaceCapabilities.minImageCount);
+     if((0 < surfaceCapabilities.maxImageCount) && (surfaceCapabilities.maxImageCount < minImageCount))
+     {
+        minImageCount = surfaceCapabilities.maxImageCount;
+     }
+
+     return minImageCount;
+  }
+  vk::SurfaceFormatKHR VKEngine::ChooseSwapSurfaceFormat(std::vector<vk::SurfaceFormatKHR> const &availableFormats)
+  {
+      assert(!availableFormats.empty());
+      const auto formatIt = std::ranges::find_if(
+        availableFormats,
+        [](const auto &format) { return format.format == vk::Format::eB8G8R8A8Srgb && format.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear; });
+      return formatIt != availableFormats.end() ? *formatIt : availableFormats[0];
+  }
+
+  vk::PresentModeKHR VKEngine::ChooseSwapPresentMode(std::vector<vk::PresentModeKHR> const &availablePresentModes)
+  {
+      assert(std::ranges::any_of(availablePresentModes, [](auto presentMode) { return presentMode == vk::PresentModeKHR::eFifo;}));
+      
+      return std::ranges::any_of(availablePresentModes, [](const vk::PresentModeKHR value) {return vk::PresentModeKHR::eMailbox == value;}) ?
+        vk::PresentModeKHR::eMailbox : vk::PresentModeKHR::eFifo;
   }
