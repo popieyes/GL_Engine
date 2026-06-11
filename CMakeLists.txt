@@ -57,6 +57,9 @@ set(CORE_IMGUI_SOURCES
 
 add_library(EngineCore STATIC ${SOURCES} ${CORE_IMGUI_SOURCES})
 
+# Absolute path to the project root, so asset/scene paths don't depend on the cwd
+target_compile_definitions(EngineCore PUBLIC ROOT_DIR="${CMAKE_SOURCE_DIR}/")
+
 target_include_directories(EngineCore PUBLIC
 	"include"
 	${IMGUI_DIR}

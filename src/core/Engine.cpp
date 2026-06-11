@@ -6,7 +6,7 @@
 #include "Scene.h"
 Engine::Engine()
 {
-  if (!SceneLoader::LoadScene("default_scene.yaml")) {
+  if (!SceneLoader::LoadScene(ROOT_DIR "default_scene.yaml")) {
     CORE_ERROR("Failed to load scene configuration!");
     return;
   }
