@@ -188,3 +188,21 @@ void GLEngine::EndFrame(){
 	glfwSwapBuffers(window);
   glfwPollEvents();
 }
+
+void GLEngine::Shutdown(){
+	glfwDestroyWindow(window);
+  glfwTerminate();
+}
+
+void GLEngine::ProcessInput() {
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+  activeScene->camera->ProcessKeyboard(FORWARD, deltaTime);
+if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+  activeScene->camera->ProcessKeyboard(BACKWARD, deltaTime);
+if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+  activeScene->camera->ProcessKeyboard(LEFT, deltaTime);
+if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+  activeScene->camera->ProcessKeyboard(RIGHT, deltaTime);
+if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+  glfwSetWindowShouldClose(window, true);
+}

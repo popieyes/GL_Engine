@@ -18,8 +18,8 @@ class Engine {
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
     virtual void Run() = 0;
-    void Shutdown();
-    void ProcessInput();
+    virtual void Shutdown() = 0;
+    virtual void ProcessInput() = 0;
     
     const bool IsRunning() const;
     GLFWwindow* GetWindow() const { return window; }

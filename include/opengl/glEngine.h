@@ -10,5 +10,6 @@ class GLEngine : public Engine {
     void BeginFrame() override;
     void EndFrame() override;
     void Run() override;
-
+    void Shutdown() override;
+    void ProcessInput() override;
 };
