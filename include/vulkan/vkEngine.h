@@ -35,7 +35,8 @@ class VKEngine : public Engine {
     void SelectPhysicalDevice();
     void CreateLogicalDevice();
     void CreateSwapchain();
-
+    void CreateImageViews();
+    void CreateGraphicsPipeline();
 
     std::vector<const char*> GetRequiredInstanceExtensions();
     bool IsDeviceSuitable(vk::raii::PhysicalDevice const& device);

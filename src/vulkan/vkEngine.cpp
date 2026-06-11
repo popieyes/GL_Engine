@@ -51,6 +51,7 @@ const int VKEngine::Setup() {
   SelectPhysicalDevice();
   CreateLogicalDevice();
   CreateSwapchain();
+  CreateImageViews();
 
   return 0;
 }
@@ -313,4 +314,20 @@ bool VKEngine::IsDeviceSuitable(vk::raii::PhysicalDevice const& physicalDevice)
       
       return std::ranges::any_of(availablePresentModes, [](const vk::PresentModeKHR value) {return vk::PresentModeKHR::eMailbox == value;}) ?
         vk::PresentModeKHR::eMailbox : vk::PresentModeKHR::eFifo;
+  }
+
+  void VKEngine::CreateImageViews() {
+    assert(swapChainImageViews.empty());
+
+    vk::ImageViewCreateInfo imageViewCreateInfo{.viewType    = vk::ImageViewType::e2D,
+                                                .format = swapChainSurfaceFormat.format,
+                                                .subresourceRange = { vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}};
+
+    for (auto &image : swapChainImages)
+    {
+      imageViewCreateInfo.image = image;
+      swapChainImageViews.emplace_back(device, imageViewCreateInfo);
+    }
+
+
   }
