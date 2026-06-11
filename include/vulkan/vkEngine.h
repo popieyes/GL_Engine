@@ -33,10 +33,11 @@ class VKEngine : public Engine {
     vk::raii::Pipeline graphicsPipeline = nullptr;
     vk::raii::CommandPool commandPool = nullptr;
     uint32_t queueIndex = ~0;
-    vk::raii::CommandBuffer commandBuffer = nullptr;
-    vk::raii::Semaphore presentCompleteSemaphore = nullptr;
-    vk::raii::Semaphore renderFinishedSemaphore = nullptr;
-    vk::raii::Fence drawFence = nullptr;
+    uint32_t frameIndex = 0;
+    std::vector<vk::raii::CommandBuffer> commandBuffers;
+    std::vector<vk::raii::Semaphore> presentCompleteSemaphores;
+    std::vector<vk::raii::Semaphore> renderFinishedSemaphores;
+    std::vector<vk::raii::Fence> inFlightFences;
 
     void CreateInstance();
     void SetupDebugMessenger();
@@ -47,7 +48,7 @@ class VKEngine : public Engine {
     void CreateImageViews();
     void CreateGraphicsPipeline();
     void CreateCommandPool();
-    void CreateCommandBuffer();
+    void CreateCommandBuffers();
     void DrawFrame();
     void CreateSyncObjects();
 
