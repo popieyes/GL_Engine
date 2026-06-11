@@ -207,7 +207,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE "VULKAN_HPP_HANDLE_ERROR_OUT_
 # Slang shader
 set (SHADER_TARGET ${PROJECT_NAME}Shader)
 set (SHADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders)
-set (SHADER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/VKTemplate/shader.slang")
+set (SHADER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/shader.slang")
 set (ENTRY_POINTS -entry vertMain -entry fragMain)
 add_custom_command(OUTPUT ${SHADERS_DIR} COMMAND ${CMAKE_COMMAND} -E make_directory ${SHADERS_DIR})
 add_custom_command(

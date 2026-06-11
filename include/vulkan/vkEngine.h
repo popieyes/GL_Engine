@@ -28,6 +28,7 @@ class VKEngine : public Engine {
     std::vector<vk::raii::ImageView> swapChainImageViews;
     vk::SurfaceFormatKHR swapChainSurfaceFormat;
     vk::Extent2D swapChainExtent;
+    vk::raii::Pipeline graphicsPipeline = nullptr;
 
     void CreateInstance();
     void SetupDebugMessenger();
@@ -44,4 +45,5 @@ class VKEngine : public Engine {
     vk::Extent2D ChooseSwapExtent(vk::SurfaceCapabilitiesKHR const &surfaceCapabilities);
     uint32_t ChooseSwapMinImageCount(vk::SurfaceCapabilitiesKHR  const &surfaceCapabilities);
     vk::PresentModeKHR ChooseSwapPresentMode(std::vector<vk::PresentModeKHR> const &availablePresentMode);
+    [[nodiscard]] vk::raii::ShaderModule CreateShaderModule(const std::vector<char>& code) const;
 };
